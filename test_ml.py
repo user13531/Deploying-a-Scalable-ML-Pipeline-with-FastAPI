@@ -3,6 +3,7 @@ import numpy as np
 #from sklearn.datasets import make_classification
 #from sklearn.model_selection import train_test_split
 from ml.model import train_model#, #apply_labels, compute_model_metrics
+from ml.data import apply_label 
 # TODO: add necessary import
 
 X_train = np.random.rand(100, 10)  # Example training data
@@ -16,19 +17,16 @@ def test_train_model():
     model = train_model(X_train, y_train)
     assert model is not None, "Model should not be None"
     assert hasattr(model, 'predict'), "Trained model should have a predict method"
-    pass
 
 
 # TODO: implement the second test. Change the function name and input as needed
-#def test_apply_labels():
+def test_apply_labels():
     """
     # add description for the second test
     """
-    #predictions = np.array([0, 1, 0, 1])
-    #labels = apply_labels(predictions)
-    #assert len(labels) == len(predictions), "Labels length should match predictions length"
-    #assert set(labels) == {">50K", "<50K"}, "Labels should be correctly applied"
-    #pass
+    predictions = np.array([0, 1, 0, 1])
+    assert apply_label([1]) == ">50K", "Test case for label 1 failed"
+    assert apply_label([0]) == "<=50K", "Test case for label 0 failed"
 
 
 # TODO: implement the third test. Change the function name and input as needed
