@@ -1,11 +1,8 @@
 import os
 
-import numpy as np
 import pandas as pd
-from pandas import DataFrame
 from sklearn.model_selection import train_test_split
 
-from config import project_path, model_path, encoder_path
 from ml.data import process_data
 from ml.model import (
     compute_model_metrics,
@@ -15,21 +12,15 @@ from ml.model import (
     save_model,
     train_model,
 )
-
 # TODO: load the cencus.csv data
-def get_census_data() -> DataFrame:
-    data_path = os.path.join(project_path, "data", "census.csv")
-    print(f"Path to the census data: {data_path}'")
-    data = DataFrame = pd.read_csv(data_path, header=0)
-    return data
+project_path = os.getcwd()
+data_path = os.path.join(project_path, "data", "census.csv")
+print(data_path)
+data = pd.read_csv(data_path)
 
-def get_train_test_sets(data: DataFrame):
-    train, test = train_test_split(data, test_size=0.2, random_state=42)
-
-    return train, test
-
-data = get_census_data()
-train, test = get_train_test_sets(data)
+# TODO: split the provided data to have a train dataset and a test dataset
+# Optional enhancement, use K-fold cross validation instead of a train-test split.
+train, test = train_test_split(data, test_size=0.2, random_state=42)
 
 # DO NOT MODIFY
 cat_features = [
@@ -45,13 +36,11 @@ cat_features = [
 
 # TODO: use the process_data function provided to process the data.
 X_train, y_train, encoder, lb = process_data(
-    X=train,
+    train,
     categorical_features=cat_features,
     label="salary",
-    training=True,
-    encoder=None,
-    lb=None,
-)
+    training=True  # Set to True for training data
+    )
 
 X_test, y_test, _, _ = process_data(
     test,
@@ -62,9 +51,7 @@ X_test, y_test, _, _ = process_data(
     lb=lb,
 )
 
-np.save(os.path.join(project_path, "data", "X_test.npy"), X_test)
-np.save(os.path.join(project_path, "data", "y_test.npy"), y_test)
-
+# TODO: use the train_model function to train the model on the training dataset
 model = train_model(X_train, y_train)
 
 # save the model and the encoder
@@ -92,14 +79,14 @@ for col in cat_features:
     for slicevalue in sorted(test[col].unique()):
         count = test[test[col] == slicevalue].shape[0]
         p, r, fb = performance_on_categorical_slice(
-            data,
-            column_name=col,
-            slice_value=slicevalue,
-            categorical_features=cat_features,
-            label="salary",
-            encoder=encoder,
-            lb=lb,
-            model=model,
+            data=test,               # Pass the entire test DataFrame
+            column_name=col,        # The column name you're slicing by
+            slice_value=slicevalue,  # The current slice value
+            categorical_features=cat_features,  # List of categorical features
+            label='salary',         # Replace with your actual label column name
+            encoder=encoder,        # Your OneHotEncoder instance
+            lb=lb,                  # Your LabelBinarizer instance
+            model=model             # Your trained model
         )
         with open("slice_output.txt", "a") as f:
             print(f"{col}: {slicevalue}, Count: {count:,}", file=f)

@@ -5,7 +5,10 @@ from typing import Tuple
 from sklearn.metrics import fbeta_score, precision_score, recall_score
 from ml.data import process_data
 from sklearn.base import BaseEstimator
-from sklearn.ensemble import GradientBoostingClassifier
+import joblib
+from sklearn.linear_model import LogisticRegression
+#from sklearn.ensemble import GradientBoostingClassifier
+from sklearn.metrics import classification_report
 
 # Optional: implement hyperparameter tuning.
 def train_model(X_train, y_train):
@@ -23,7 +26,9 @@ def train_model(X_train, y_train):
     model
         Trained machine learning model.
     """
-    return GradientBoostingClassifier(random_state=42).fit(X_train, y_train)
+    model = LogisticRegression()  # Increase max_iter if convergence warnings occur
+    model.fit(X_train, y_train)
+    return model
 
 def compute_model_metrics(y, preds) -> Tuple[float, float, float]:
     """
@@ -60,7 +65,7 @@ def inference(model, X) -> np.array:
     preds : np.array
         Predictions from the model.
     """
-    # return model.predict(X)
+    return model.predict(X)
     
 def save_model(model: BaseEstimator, path) -> None:
     """ Serializes model to a file.
@@ -72,14 +77,11 @@ def save_model(model: BaseEstimator, path) -> None:
     path : str
         Path to save pickle file.
     """
-    with open(path, "wb") as f:
-        pickle.dump(model, f, protocol=pickle.HIGHEST_PROTOCOL)
-
+    joblib.dump(model, path)
+    
 def load_model(path):
     """ Loads pickle file from `path` and returns it."""
-    with open(path, "rb") as f:
-        clf = pickle.load(f)
-    return clf
+    return joblib.load(path)
 
 def performance_on_categorical_slice(
     data, column_name, slice_value, categorical_features, label, encoder, lb, model
@@ -117,14 +119,19 @@ def performance_on_categorical_slice(
     fbeta : float
 
     """
+  # TODO: implement the function
     X_slice, y_slice, _, _ = process_data(
-        X=data[data[column_name] == slice_value],
-        categorical_features=categorical_features,
-        label=label,
-        training=False,
-        encoder=encoder,
+        data[data[column_name] == slice_value],  # Filter the data for the slice value
+        #data,
+        categorical_features=categorical_features,  # Specify your categorical features if needed
+        label=label,   # Replace with your actual label column name
+        encoder=encoder, 
         lb=lb,
-    )
+        training=False,
+        )
+
     preds = inference(model, X_slice)
+
     precision, recall, fbeta = compute_model_metrics(y_slice, preds)
+
     return precision, recall, fbeta

@@ -43,6 +43,12 @@ def process_data(
         Trained LabelBinarizer if training is True, otherwise returns the binarizer
         passed in.
     """
+    #X_categorical = X[categorical_features].values
+    #X_continuous = X.drop(*[categorical_features], axis=1)
+    
+    #if encoder is None:
+    #    encoder = OneHotEncoder(sparse_output=False)  # Use sparse_output instead of sparse
+    #    encoder.fit(X_categorical)  # Fit on categorical features
 
     if label is not None:
         y = X[label]
@@ -69,6 +75,7 @@ def process_data(
     X = np.concatenate([X_continuous, X_categorical], axis=1)
     return X, y, encoder, lb
 
+   
 def apply_label(inference):
     """ Convert the binary label in a single inference sample into string output."""
     if inference[0] == 1:
