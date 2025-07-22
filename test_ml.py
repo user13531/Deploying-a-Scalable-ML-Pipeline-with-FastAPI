@@ -4,10 +4,13 @@ import numpy as np
 #from sklearn.model_selection import train_test_split
 from ml.model import train_model#, #apply_labels, compute_model_metrics
 from ml.data import apply_label 
+from ml.model import compute_model_metrics
 # TODO: add necessary import
 
 X_train = np.random.rand(100, 10)  # Example training data
 y_train = np.random.randint(0, 2, size=100)  # Example
+X_test = np.random.rand(50, 10)  # Example test data
+y_test = np.random.randint(0, 2, size=50)  # Example
 
 # TODO: implement the first test. Change the function name and input as needed
 def test_train_model():
@@ -30,14 +33,14 @@ def test_apply_labels():
 
 
 # TODO: implement the third test. Change the function name and input as needed
-#def test_compute_model_metrics():
+def test_compute_model_metrics():
     """
     # add description for the third test
     """
-    #model = train_model(X_train, y_train)
-    #y_pred = model.predict(X_test)
-    #metrics = compute_model_metrics(y_test, y_pred)
-    #pass
+    model = train_model(X_train, y_train)
+    y_pred = model.predict(X_test)
+    metrics = compute_model_metrics(y_test, y_pred)
+    pass
 
     #assert 'accuracy' in metrics, "Metrics should include accuracy"
     #assert 'precision' in metrics, "Metrics should include precision"
